@@ -1,0 +1,40 @@
+jobs:
+  - job: Test_windows2016
+    pool: 
+      vmImage: vs2017-win2016
+    steps: 
+      - powershell: |
+          ./build.ps1 -Task Test -Bootstrap -Verbose
+        displayName: "Running Tests Windows 2016"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**Release/TestsResults.xml'
+          testRunTitle: 'PS_Win2016'
+
+  - job: Test_Ubuntu
+    pool: 
+      vmImage: ubuntu-latest
+    steps: 
+      - script: "pwsh -c ./build.ps1 -Task Test -Bootstrap -Verbose"
+        displayName: "Running Tests Ubuntu"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**Release/TestsResults.xml'
+          testRunTitle: 'PS_ubuntu-latest'
+
+  - job: Test_macos
+    pool: 
+      vmImage: macOS-10.14
+    steps: 
+      - script: "pwsh -c ./build.ps1 -Task Test -Bootstrap -Verbose"
+        displayName: "Running Tests MacOS"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**Release/TestsResults.xml'
+          testRunTitle: 'PS_macOS-10.14'

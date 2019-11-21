@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plasterManifest schemaVersion="0.4" 
+    xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
+    <metadata>
+        <name>PlasterManifest</name>
+        <id>361872a8-daf1-473c-a5d1-90a38626b0fb</id>
+        <title>New Module</title>
+        <description>New PowerShell module base.</description>
+        <version>0.1.0</version>
+        <author>Philip Haglund</author>
+        <tags>Module, ModuleManifest, Build</tags>
+    </metadata>
+
+    <parameters>
+        <parameter name='ModuleName' type='text' prompt='Enter the name of the module' />
+        <parameter name='ModuleDescription' type='text' prompt='Enter a description of the module (required for publishing to the PowerShell Gallery)' />
+        <parameter name='Version' type='text' prompt='Enter the version number of the module' default='0.1.0' />
+        <parameter name='FullName' type='user-fullname' prompt='Enter your full name' store='text' />
+        <parameter name='CompanyName' type='text' prompt='Enter your your company name' store='text' default='Omnicit AB' />
+        <parameter name="ModuleEmail" type="user-email" prompt="Email" default="philip.haglund@omnicit.se"/>
+        <parameter name='License' type='choice' prompt='Select a license (see http://choosealicense.com for help choosing):' default='2' store='text'>
+            <choice label='&amp;None' help="No license." value="None"/>
+            <choice label='&amp;Apache' help="Adds an Apache license file." value="Apache"/>
+            <choice label='&amp;MIT' help="Adds an MIT license file." value="MIT"/>
+        </parameter>
+
+        <parameter name="powerShellVersion" type="choice" store="text" prompt="Minimum PowerShell version" default="1">
+            <choice label="&amp;3.0" help="Minimum PowerShell Version required is 3.0 (Legacy)" value="3.0" />
+            <choice label="&amp;4.0" help="Minimum PowerShell Version required is 4.0 (Legacy)" value="4.0" />
+            <choice label="&amp;5.1" help="Minimum PowerShell Version required is 5.1" value="5.1" />
+            <choice label="&amp;6.2" help="Minimum PowerShell Version required is 6.2 (PowerShell Core/.Net Standard 2.x Compliant)" value="6.2" />
+            <choice label="&amp;7.0" help="Minimum PowerShell Version required is 7.0 (PowerShell Core/.Net Standard 3.x Compliant)" value="7.0" />
+        </parameter>
+
+        <parameter name='Options' type='multichoice' prompt='Select one or more of the following tooling options:' default='1,2,3,4,5' store='text' >
+            <choice label='&amp;None' help="No tooling options specified." value="None"/>
+            <choice label='Add &amp;Git .gitignore file' help="Adds a .gitignore file." value="Git"/>
+            <choice label='Add p&amp;sake build script' help="Adds psake build script that generates the module directory for publishing to the PowerShell Gallery." value="psake"/>
+            <choice label='Add &amp;Pester test support' help="Adds test directory and Pester test for the module manifest file." value="Pester"/>
+            <choice label='Add PSScript&amp;Analyzer support' help="Adds script analysis support using PSScriptAnalyzer." value="PSScriptAnalyzer"/>
+            <choice label='Add plat&amp;yPS help generation support' help="Adds help build support using platyPS." value="platyPS"/>
+        </parameter>
+
+        <parameter name='Editor' type='choice' prompt='Select one of the supported script editors for better editor integration (or None):' default='1' store='text' >
+            <choice label='&amp;None' help="No editor specified." value="None"/>
+            <choice label='Visual Studio &amp;Code' help="Your editor is Visual Studio Code." value="VSCode"/>
+        </parameter>
+    </parameters>
+
+    <content>
+        <message>&#10;&#10;Scaffolding your awesome PowerShell Module...&#10;&#10;&#10;</message>
+
+        
+
+        <file destination='src\Classes\' source='' />
+        <file destination='src\Public\' source='' />
+        <file destination='src\Private\' source='' />
+        <file condition='$PLASTER_PARAM_Options -contains "Git"' source='_gitignore' destination='.gitignore' />
+        <file condition='$PLASTER_PARAM_Options -contains "Git"' source='_gitkeep' destination='src\Classes\.gitkeep' />
+        <file condition='$PLASTER_PARAM_Options -contains "Git"' source='_gitkeep' destination='src\Public\.gitkeep' />
+        <file condition='$PLASTER_PARAM_Options -contains "Git"' source='_gitkeep' destination='src\Private\.gitkeep' />
+        <file condition='$PLASTER_PARAM_Options -contains "psake"' source='build*.ps1' destination='' />
+        <file condition='$PLASTER_PARAM_Options -contains "Pester"' source='test\Unit' destination='' />
+        <file condition='$PLASTER_PARAM_Options -contains "Pester"' source='test\Unit\Classes' destination='' />
+        <file condition='$PLASTER_PARAM_Options -contains "Pester"' source='test\Unit\Public' destination='' />
+        <file condition='$PLASTER_PARAM_Options -contains "Pester"' source='test\Unit\Private' destination='' />
+        <file condition='($PLASTER_PARAM_Options -contains "Pester") -and ($PLASTER_PARAM_Options -contains "Git")' source='_gitkeep' destination='test\Unit\Classes\.gitkeep' />
+        <file condition='($PLASTER_PARAM_Options -contains "Pester") -and ($PLASTER_PARAM_Options -contains "Git")' source='_gitkeep' destination='test\Unit\Public\.gitkeep' />
+        <file condition='($PLASTER_PARAM_Options -contains "Pester") -and ($PLASTER_PARAM_Options -contains "Git")' source='_gitkeep' destination='test\Unit\Private\.gitkeep' />
+
+
+        <file source='ScriptAnalyzerSettings.psd1' destination='' />
+        <file source='src\Module.psm1' destination='src\${PLASTER_PARAM_ModuleName}.psm1' />
+
+        <templateFile source='src\Module.psd1' destination='src\${PLASTER_PARAM_ModuleName}.psd1' encoding='UTF8' />
+        <templateFile source='ReleaseNotes.md' destination='' />
+        <templateFile source='README.md' destination='' />
+
+        <templateFile condition="$PLASTER_PARAM_Options -contains 'platyPS'" source='docs\en-US\Module.md' destination='docs\en-US\${PLASTER_PARAM_ModuleName}.md' />
+        <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'" source='test\help.tests.ps1' destination='test\help.tests.ps1' />
+        <templateFile condition="$PLASTER_PARAM_Options -contains 'Pester'" source='test\ModuleManifest.tests.ps1' destination='test\ModuleManifest.tests.ps1' />
+        <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'" source='license\Apache.txt' destination='LICENSE.txt' encoding="UTF8"/>
+        <templateFile condition="$PLASTER_PARAM_License -eq 'MIT'" source='license\MIT.txt' destination='LICENSE.txt' encoding="UTF8"/>
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -notcontains 'psake') -and ($PLASTER_PARAM_Options -contains 'Pester')" source='editor\VSCode\tasks_pester.json' destination='.vscode\tasks.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -contains 'psake') -and ($PLASTER_PARAM_Options -notcontains 'Pester')" source='editor\VSCode\tasks_psake.json' destination='.vscode\tasks.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -contains 'psake') -and ($PLASTER_PARAM_Options -contains 'Pester')" source='editor\VSCode\tasks_psake_pester.json' destination='.vscode\tasks.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode') -and ($PLASTER_PARAM_Options -contains 'PSScriptAnalyzer')" source='editor\VSCode\settings.json' destination='.vscode\settings.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode')" source='editor\VSCode\extensions.json' destination='.vscode\extensions.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode')" source='editor\VSCode\launch.json' destination='.vscode\launch.json' />
+
+        <file condition="($PLASTER_PARAM_Editor -eq 'VSCode')" source='editor\VSCode\Module.code-workspace' destination='${PLASTER_PARAM_ModuleName}.code-workspace' />
+
+
+        <requireModule name="Pester" condition='$PLASTER_PARAM_Options -contains "Pester"' minimumVersion="4.8.1" message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 4.8.1, VS Code will not display Pester warnings and errors in the Problems panel."/>
+
+        <requireModule name="psake" condition='$PLASTER_PARAM_Options -contains "psake"' minimumVersion="4.7.4" message="Without psake, you will not be able to run the provided build script to build and/or publish your module."/>
+
+        <requireModule name="PSScriptAnalyzer" condition='$PLASTER_PARAM_Options -contains "PSScriptAnalyzer"' minimumVersion="1.18.2" message="Without PSScriptAnalyzer, you will not be able to perform script analysis, or use the provided options to control script analysis."/>
+
+        <requireModule name="platyPS" condition='$PLASTER_PARAM_Options -contains "platyPS"' minimumVersion="0.14.0" message="Without platyPS, you will not be able to generate PowerShell external help for your module using markdown."/>
+
+        <message>
+Your new awesome PowerShell module '$PLASTER_PARAM_ModuleName' has been created.
+
+        </message>
+
+        <message condition="$PLASTER_PARAM_Options -contains 'Pester'">
+A Pester test has been created to validate the module's manifest file.  Add additional tests to the test directory.
+You can run the Pester tests in your project by executing the 'test' task.  Press Ctrl+P, then type 'task test'.
+
+        </message>
+
+        <message condition="$PLASTER_PARAM_Options -contains 'psake'">
+You can build your project by executing the 'build' task.  Press Ctrl+P, then type 'task build'.
+You can publish your project to the PSGallery by pressing Ctrl+P, then type 'task publish'.
+
+        </message>
+
+        <message condition="($PLASTER_PARAM_Options -contains 'psake') -and ($PLASTER_PARAM_Options -contains 'platyPS')">
+You can generate help and additional documentation using platyPS by running the 'build help' task.  Press Ctrl+P,
+then type 'task build help'.  Add additional documentation written in platyPS markdown to the docs directory. You can
+update the help by running the 'build help' task again.
+
+        </message>
+    </content>
+</plasterManifest>

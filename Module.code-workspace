@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"powershell.codeFormatting.preset": "Stroustrup",
+		"powershell.codeFormatting.useCorrectCasing": true,
+		"powershell.codeFormatting.ignoreOneLineBlock": true,
+		"powershell.codeFormatting.openBraceOnSameLine": true,
+		"powershell.scriptAnalysis.settingsPath": "ScriptAnalyzerSettings.psd1",
+		"files.trimTrailingWhitespace": true,
+		"files.encoding": "utf8",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 4
+	}
+}
