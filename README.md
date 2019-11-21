@@ -29,9 +29,9 @@ You can learn how to use the functions by reading our documentation:
 
 - [Cmdlet Overview](docs/en-US/<%=$PLASTER_PARAM_ModuleName%>.md)
 
-## Maintainers
+## More information
 
-- [Philip Haglund](https://github.com/PhilipHaglund) - [@KPHaglund](http://twitter.com/KPHaglund)
+- [<%=$PLASTER_PARAM_FullName%>](/RepositryURL)
 
 ## License
 
